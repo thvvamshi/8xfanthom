@@ -97,24 +97,45 @@ const MeetingWorkspacePage = () => {
     }
     return () => clearInterval(interval);
   }, [isPlaying, meeting]);
+  const completionInProgress = useRef(false);
 
   // Persist meeting completion state
   useEffect(() => {
-    if (!meeting || meeting.completed) return;
+    if (!meeting || meeting.completed || completionInProgress.current) return;
     
-    // For a 60m meeting, duration - 300 is 55:00. For shorter meetings, fallback to 90%
-    const completionThreshold = Math.max(meeting.duration * 0.9, meeting.duration - 300);
+    // Determine effective meeting end based on transcript
+    let lastTranscriptStartTime = 0;
+    if (meeting.transcript && meeting.transcript.length > 0) {
+      // Find the maximum startTime safely across all entries
+      lastTranscriptStartTime = Math.max(
+        ...meeting.transcript
+          .map(entry => typeof entry.startTime === 'number' ? entry.startTime : 0)
+          .filter(time => time > 0)
+      );
+    }
     
-    if (currentTime >= completionThreshold) {
-      // Optimistically update local state so UI locks in completion instantly
-      setMeeting(prev => prev ? { ...prev, completed: true } : null);
+    // Clamp the timestamp so it doesn't exceed recording duration (invalid data)
+    if (lastTranscriptStartTime > meeting.duration) {
+      lastTranscriptStartTime = meeting.duration;
+    }
 
-      // Persist to backend
+    // Determine completion threshold
+    // If no valid transcript is found, fallback safely
+    const effectiveMeetingEnd = lastTranscriptStartTime > 0 
+      ? lastTranscriptStartTime 
+      : meeting.duration;
+      
+    if (currentTime >= effectiveMeetingEnd) {
+      completionInProgress.current = true;
+      
+      // Persist to backend and update state with canonical finalized outcome
       updateMeetingCompletion(meeting._id, true)
+        .then(updatedMeeting => {
+          setMeeting(updatedMeeting);
+        })
         .catch(err => {
           console.error('Failed to persist meeting completion', err);
-          // Revert on failure
-          setMeeting(prev => prev ? { ...prev, completed: false } : null);
+          completionInProgress.current = false;
         });
     }
   }, [currentTime, meeting]);
@@ -516,7 +537,6 @@ const MeetingWorkspacePage = () => {
               <MeetingIntentPanel
                 intents={meeting.intents}
                 currentTime={currentTime}
-                duration={meeting.duration}
                 isCompleted={meeting.completed}
                 onSeek={handleSeek}
               />

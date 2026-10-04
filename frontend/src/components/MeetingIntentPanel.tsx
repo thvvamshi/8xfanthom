@@ -10,7 +10,7 @@ interface MeetingIntentPanelProps {
   onSeek: (time: number) => void;
 }
 
-export default function MeetingIntentPanel({ intents, currentTime, duration, isCompleted, onSeek }: MeetingIntentPanelProps) {
+export default function MeetingIntentPanel({ intents, currentTime, isCompleted, onSeek }: Omit<MeetingIntentPanelProps, 'duration'>) {
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [followUpDraft, setFollowUpDraft] = useState<string | null>(null);
@@ -28,18 +28,13 @@ export default function MeetingIntentPanel({ intents, currentTime, duration, isC
       };
     }
     
-    const isMissed = intent.status === 'missed';
     const hasEvidence = intent.evidenceTimestamp !== undefined && intent.evidenceTimestamp !== null;
     
     let computedStatus = 'pending';
     
     if (hasEvidence) {
       if (currentTime >= intent.evidenceTimestamp!) {
-        computedStatus = intent.status; // 'covered' or 'partial'
-      }
-    } else if (isMissed) {
-      if (currentTime >= duration * 0.8) {
-        computedStatus = 'missed';
+        computedStatus = intent.outcomeStatus || intent.status; // reveal the outcome
       }
     }
 

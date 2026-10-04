@@ -32,7 +32,18 @@ export interface Meeting {
   };
   actionItems: Array<{ _id: string; text: string; assignee?: string; dueDate?: string; completed: boolean }>;
   highlights: Array<{ _id: string; startTime: number; endTime: number; text: string; createdAt: string }>;
+  intents?: Array<{ 
+    _id: string; 
+    text: string; 
+    status: 'covered' | 'partial' | 'missed' | 'pending'; 
+    outcomeStatus?: 'covered' | 'partial' | 'missed';
+    evidenceTimestamp?: number; 
+    evidenceQuote?: string; 
+    evidenceSpeaker?: string; 
+    suggestedQuestion?: string; 
+  }>;
   template: string;
+  completed?: boolean;
 }
 
 export interface SearchResult {

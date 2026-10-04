@@ -27,6 +27,16 @@ export interface IHighlight {
   createdAt: Date;
 }
 
+export interface IMeetingIntent {
+  text: string;
+  status: 'covered' | 'partial' | 'missed' | 'pending';
+  outcomeStatus?: 'covered' | 'partial' | 'missed';
+  evidenceTimestamp?: number;
+  evidenceQuote?: string;
+  evidenceSpeaker?: string;
+  suggestedQuestion?: string;
+}
+
 export interface IMeeting extends Document {
   title: string;
   description?: string;
@@ -63,7 +73,9 @@ export interface IMeeting extends Document {
   };
   actionItems: IActionItem[];
   highlights: IHighlight[];
+  intents?: IMeetingIntent[];
   template: string;
+  completed?: boolean;
 }
 
 const MeetingSchema: Schema = new Schema({
@@ -121,7 +133,17 @@ const MeetingSchema: Schema = new Schema({
     endTime: { type: Number, required: true },
     text: { type: String, required: true },
     createdAt: { type: Date, default: Date.now }
-  }]
+  }],
+  intents: [{
+    text: { type: String, required: true },
+    status: { type: String, enum: ['covered', 'partial', 'missed', 'pending'], default: 'pending' },
+    outcomeStatus: { type: String, enum: ['covered', 'partial', 'missed'] },
+    evidenceTimestamp: { type: Number },
+    evidenceQuote: { type: String },
+    evidenceSpeaker: { type: String },
+    suggestedQuestion: { type: String }
+  }],
+  completed: { type: Boolean, default: false }
 }, { timestamps: true });
 
 // Indexes for faster querying

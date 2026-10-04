@@ -96,13 +96,20 @@ export const searchMeetings = async (query: string) => {
 };
 
 export const updateCompletion = async (id: string, completed: boolean) => {
-  const meeting = await Meeting.findByIdAndUpdate(
-    id,
-    { completed },
-    { new: true }
-  );
+  const meeting = await Meeting.findById(id);
   if (!meeting) throw new Error('Meeting not found');
-  return meeting;
+  
+  meeting.completed = completed;
+  if (completed && meeting.intents) {
+    meeting.intents.forEach(intent => {
+      // Finalize the outcome
+      if ((intent as any).outcomeStatus) {
+        intent.status = (intent as any).outcomeStatus;
+      }
+    });
+  }
+
+  return await meeting.save();
 };
 
 export const resetIntents = async (id: string) => {
@@ -113,9 +120,6 @@ export const resetIntents = async (id: string) => {
   if (meeting.intents) {
     meeting.intents.forEach(intent => {
       intent.status = 'pending';
-      intent.evidenceTimestamp = undefined;
-      intent.evidenceQuote = undefined;
-      intent.evidenceSpeaker = undefined;
     });
   }
 

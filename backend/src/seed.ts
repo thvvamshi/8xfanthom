@@ -8,17 +8,31 @@ const seedData = [
     meetingType: 'Sales',
     template: 'Sales Discovery',
     date: new Date('2023-10-15T10:00:00Z'),
-    duration: 1800,
+    duration: 3600,
     participants: [
       { name: 'Sarah Chen', email: 'sarah@8xfathom.example' },
       { name: 'Mike Ross', email: 'mike@acmecorp.example' }
     ],
-    recording: { type: 'mock', url: '/mock-media/acme-discovery.mp4', duration: 1800 },
+    recording: { type: 'mock', url: '/mock-media/acme-discovery.mp4', duration: 3600 },
     transcript: [
       { speaker: 'Sarah Chen', startTime: 10, endTime: 15, text: 'Thanks for joining, Mike. What brings you to us today?' },
-      { speaker: 'Mike Ross', startTime: 16, endTime: 30, text: 'Our main pain point is tracking action items across various sales calls.' },
+      { speaker: 'Mike Ross', startTime: 16, endTime: 30, text: 'Our main pain point is tracking action items across various sales calls. We keep losing track of commitments.' },
       { speaker: 'Sarah Chen', startTime: 32, endTime: 45, text: 'We definitely solve that. What timeline are you looking at for implementation?' },
-      { speaker: 'Mike Ross', startTime: 47, endTime: 55, text: 'Ideally within this quarter.' }
+      { speaker: 'Mike Ross', startTime: 47, endTime: 55, text: 'Ideally within this quarter.' },
+      { speaker: 'Sarah Chen', startTime: 180, endTime: 195, text: 'Let me show you a quick demo of how we handle follow-ups automatically.' },
+      { speaker: 'Mike Ross', startTime: 200, endTime: 215, text: 'That looks very smooth. Can it integrate directly with our CRM?' },
+      { speaker: 'Sarah Chen', startTime: 218, endTime: 240, text: 'Yes, we have out-of-the-box integrations with Salesforce, HubSpot, and a few others.' },
+      { speaker: 'Sarah Chen', startTime: 800, endTime: 820, text: 'So moving on to the pricing model, we have tier-based plans depending on your team size.' },
+      { speaker: 'Mike Ross', startTime: 1120, endTime: 1128, text: 'At that price point, I think we can get internal approval without much pushback.' },
+      { speaker: 'Sarah Chen', startTime: 1130, endTime: 1145, text: 'Great. Let me send over the technical documentation for your engineering team to review.' },
+      { speaker: 'Mike Ross', startTime: 1500, endTime: 1520, text: 'One question: how long does onboarding usually take for a team of our size?' },
+      { speaker: 'Sarah Chen', startTime: 1522, endTime: 1550, text: 'Usually about two weeks from contract signature to full deployment.' },
+      { speaker: 'Sarah Chen', startTime: 1865, endTime: 1872, text: 'How are you currently evaluating us against competitors?' },
+      { speaker: 'Mike Ross', startTime: 1873, endTime: 1885, text: 'We mentioned it briefly to the board, but there is no conclusion yet on who else we will look at.' },
+      { speaker: 'Sarah Chen', startTime: 2500, endTime: 2520, text: 'Just doing a time check, we have about 15 minutes left. Any other questions?' },
+      { speaker: 'Mike Ross', startTime: 2525, endTime: 2540, text: 'I think that covers most of it. We should definitely schedule a PoC kickoff.' },
+      { speaker: 'Sarah Chen', startTime: 3400, endTime: 3415, text: 'Alright, I will get those invites sent out right away. Thanks for your time today, Mike.' },
+      { speaker: 'Mike Ross', startTime: 3418, endTime: 3425, text: 'Thanks Sarah. Talk soon.' }
     ],
     summary: {
       overview: 'Acme Corp is evaluating our platform to solve their action-item tracking issues in sales calls.',
@@ -38,6 +52,32 @@ const seedData = [
     ],
     highlights: [
       { startTime: 16, endTime: 30, text: 'Our main pain point is tracking action items across various sales calls.', createdAt: new Date() }
+    ],
+    intents: [
+      {
+        text: 'Confirm the renewal timeline',
+        status: 'covered',
+        outcomeStatus: 'covered',
+        evidenceTimestamp: 1120,
+        evidenceQuote: 'At that price point, I think we can get internal approval without much pushback.',
+        evidenceSpeaker: 'Mike Ross',
+        suggestedQuestion: 'Could we clarify the main concern with the proposed pricing?'
+      },
+      {
+        text: 'Understand the customer\'s pricing concerns',
+        status: 'partial',
+        outcomeStatus: 'partial',
+        evidenceTimestamp: 1865,
+        evidenceQuote: 'We mentioned it briefly to the board, but there is no conclusion yet on who else we will look at.',
+        evidenceSpeaker: 'Mike Ross',
+        suggestedQuestion: 'Who else are you currently evaluating?'
+      },
+      {
+        text: 'Identify the final decision maker',
+        status: 'missed',
+        outcomeStatus: 'missed',
+        suggestedQuestion: 'Before we wrap, can we confirm the renewal timeline and what the next step looks like?'
+      }
     ]
   },
   {
