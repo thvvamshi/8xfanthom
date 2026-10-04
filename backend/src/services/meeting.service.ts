@@ -105,13 +105,12 @@ export const updateCompletion = async (id: string, completed: boolean) => {
   return meeting;
 };
 
-export const resetMeetingIntents = async (id: string) => {
+export const resetIntents = async (id: string) => {
   const meeting = await Meeting.findById(id);
   if (!meeting) throw new Error('Meeting not found');
-  
+
   meeting.completed = false;
-  
-  if (meeting.intents && meeting.intents.length > 0) {
+  if (meeting.intents) {
     meeting.intents.forEach(intent => {
       intent.status = 'pending';
       intent.evidenceTimestamp = undefined;
@@ -119,7 +118,6 @@ export const resetMeetingIntents = async (id: string) => {
       intent.evidenceSpeaker = undefined;
     });
   }
-  
-  await meeting.save();
-  return meeting;
+
+  return await meeting.save();
 };

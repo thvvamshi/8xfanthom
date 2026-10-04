@@ -157,13 +157,13 @@ export const resetIntents = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Meeting not found' });
     }
 
-    const meeting = await meetingService.resetMeetingIntents(id);
+    const meeting = await meetingService.resetIntents(id);
     res.status(200).json(meeting);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in resetIntents controller:', error);
-    if (error.message === 'Meeting not found') {
+    if (error instanceof Error && error.message === 'Meeting not found') {
       return res.status(404).json({ error: 'Meeting not found' });
     }
-    res.status(500).json({ error: 'Failed to reset meeting intents' });
+    res.status(500).json({ error: 'Failed to reset intents' });
   }
 };
