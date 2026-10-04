@@ -24,6 +24,14 @@ export const createHighlight = async (meetingId: string, startTime: number, endT
   );
 };
 
+export const updateIntents = async (meetingId: string, intents: any[]) => {
+  return await Meeting.findByIdAndUpdate(
+    meetingId,
+    { $set: { intents } },
+    { new: true }
+  );
+};
+
 export const searchMeetings = async (query: string) => {
   const regex = new RegExp(query, 'i');
   
@@ -85,4 +93,33 @@ export const searchMeetings = async (query: string) => {
   }
 
   return results;
+};
+
+export const updateCompletion = async (id: string, completed: boolean) => {
+  const meeting = await Meeting.findByIdAndUpdate(
+    id,
+    { completed },
+    { new: true }
+  );
+  if (!meeting) throw new Error('Meeting not found');
+  return meeting;
+};
+
+export const resetMeetingIntents = async (id: string) => {
+  const meeting = await Meeting.findById(id);
+  if (!meeting) throw new Error('Meeting not found');
+  
+  meeting.completed = false;
+  
+  if (meeting.intents && meeting.intents.length > 0) {
+    meeting.intents.forEach(intent => {
+      intent.status = 'pending';
+      intent.evidenceTimestamp = undefined;
+      intent.evidenceQuote = undefined;
+      intent.evidenceSpeaker = undefined;
+    });
+  }
+  
+  await meeting.save();
+  return meeting;
 };

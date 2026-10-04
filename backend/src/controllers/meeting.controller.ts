@@ -93,3 +93,77 @@ export const createHighlight = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to create highlight' });
   }
 };
+
+export const updateIntents = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const { intents } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).json({ error: 'Meeting not found' });
+    }
+
+    if (!Array.isArray(intents)) {
+      return res.status(400).json({ error: 'intents must be an array' });
+    }
+
+    // Sanitize intent IDs before passing to mongoose to avoid CastError
+    const sanitizedIntents = intents.map(intent => {
+      if (intent._id && intent._id.toString().startsWith('new-')) {
+        const { _id, ...rest } = intent;
+        return rest;
+      }
+      return intent;
+    });
+
+    const meeting = await meetingService.updateIntents(id, sanitizedIntents);
+    if (!meeting) {
+      return res.status(404).json({ error: 'Meeting not found' });
+    }
+    
+    res.status(200).json(meeting.intents);
+  } catch (error) {
+    console.error('Error in updateIntents controller:', error);
+    res.status(500).json({ error: 'Failed to update intents' });
+  }
+};
+
+export const updateCompletion = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const { completed } = req.body;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).json({ error: 'Meeting not found' });
+    }
+
+    if (typeof completed !== 'boolean') {
+      return res.status(400).json({ error: 'Invalid completed value' });
+    }
+
+    const meeting = await meetingService.updateCompletion(id, completed);
+    res.status(200).json(meeting);
+  } catch (error) {
+    console.error('Error in updateCompletion controller:', error);
+    res.status(500).json({ error: 'Failed to update meeting completion' });
+  }
+};
+
+export const resetIntents = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).json({ error: 'Meeting not found' });
+    }
+
+    const meeting = await meetingService.resetMeetingIntents(id);
+    res.status(200).json(meeting);
+  } catch (error: any) {
+    console.error('Error in resetIntents controller:', error);
+    if (error.message === 'Meeting not found') {
+      return res.status(404).json({ error: 'Meeting not found' });
+    }
+    res.status(500).json({ error: 'Failed to reset meeting intents' });
+  }
+};
