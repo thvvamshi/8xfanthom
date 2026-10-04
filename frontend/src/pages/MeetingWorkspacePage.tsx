@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import type { Meeting } from '../types/meeting';
-import { ArrowLeft, Play, Pause, Loader2, AlertCircle, Users, Clock, Calendar, VideoOff, Highlighter } from 'lucide-react';
+import { ArrowLeft, Play, Pause, Loader2, AlertCircle, VideoOff, Highlighter } from 'lucide-react';
 import { updateActionItem, createHighlight } from '../lib/api';
 
 const formatTime = (seconds: number) => {
@@ -337,31 +337,33 @@ const MeetingWorkspacePage = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="w-full">
       {/* Header */}
-      <div className="mb-10">
-        <Link to="/meetings" className="inline-flex items-center text-8x-muted hover:text-8x-ink mb-6 font-medium text-sm transition-colors">
-          <ArrowLeft size={16} className="mr-1.5" />
-          Back to meetings
-        </Link>
-        <h1 className="text-4xl font-serif text-8x-ink mb-4 tracking-tight">{meeting.title}</h1>
+      <div className="mb-10 pb-8 border-b border-8x-border/40">
+        <div className="flex items-center justify-between mb-8">
+          <Link to="/meetings" className="inline-flex items-center text-8x-muted hover:text-8x-ink font-medium text-sm transition-colors">
+            <ArrowLeft size={16} className="mr-1.5" />
+            Back
+          </Link>
+          <div className="flex items-center space-x-4">
+            <Link 
+              to={`/share/${meeting._id}`}
+              className="inline-flex items-center px-4 py-2 border border-8x-border text-sm font-semibold rounded-lg text-8x-ink hover:bg-white transition-colors"
+            >
+              Share Meeting
+            </Link>
+          </div>
+        </div>
         
-        <div className="flex flex-wrap items-center gap-5 text-sm text-8x-muted font-medium">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white border border-8x-border shadow-sm text-8x-ink">
-            {meeting.meetingType}
-          </span>
-          <div className="flex items-center">
-            <Calendar size={16} className="mr-2 text-8x-muted/70" />
-            {formatDate(meeting.date)}
-          </div>
-          <div className="flex items-center">
-            <Clock size={16} className="mr-2 text-8x-muted/70" />
-            {Math.floor(meeting.duration / 60)} min
-          </div>
-          <div className="flex items-center">
-            <Users size={16} className="mr-2 text-8x-muted/70" />
-            {meeting.participants?.length || 0} participants
-          </div>
+        <span className="text-[12px] font-bold text-8x-muted uppercase tracking-widest mb-4 block">Meeting</span>
+        <h1 className="text-4xl md:text-5xl font-serif text-8x-ink mb-6 tracking-tight leading-tight">{meeting.title}</h1>
+        
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-8x-muted font-medium">
+          <span>{formatDate(meeting.date)}</span>
+          <span className="text-8x-border/80">•</span>
+          <span>{meeting.participants?.length || 0} participants</span>
+          <span className="text-8x-border/80">•</span>
+          <span>{Math.floor(meeting.duration / 60)} min</span>
         </div>
       </div>
 
@@ -401,9 +403,11 @@ const MeetingWorkspacePage = () => {
           </div>
 
           {/* Transcript Viewer */}
-          <div className="bg-white rounded-2xl shadow-sm border border-8x-border/60 p-8" ref={transcriptContainerRef}>
-            <h3 className="text-xl font-bold text-8x-ink mb-6 pb-4 border-b border-8x-border/50">Transcript</h3>
-            <div className="space-y-2">
+          <div className="pt-4" ref={transcriptContainerRef}>
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-8x-border/40">
+              <h2 className="text-xl font-bold text-8x-ink">Transcript</h2>
+            </div>
+            <div className="space-y-4 pr-4">
               {meeting.transcript?.map((entry, index) => {
                 const isActive = index === activeIndex;
 
@@ -411,13 +415,13 @@ const MeetingWorkspacePage = () => {
                   <div 
                     key={index} 
                     ref={isActive ? activeTranscriptRef : null}
-                    className={`flex space-x-4 p-4 rounded-xl transition-all ${
-                      isActive ? 'bg-8x-surface/50 border border-8x-border/50 shadow-sm' : 'hover:bg-8x-surface/30 border border-transparent'
+                    className={`flex space-x-6 p-4 -mx-4 rounded-xl transition-all ${
+                      isActive ? 'bg-white/50 border border-8x-border/40' : 'hover:bg-white/30 border border-transparent'
                     }`}
                   >
                     <button 
                       onClick={() => handleSeek(entry.startTime)}
-                      className={`text-sm font-medium min-w-[3.5rem] text-left hover:underline tabular-nums mt-0.5 ${
+                      className={`text-sm font-semibold min-w-[3.5rem] text-left tabular-nums mt-0.5 ${
                         isActive ? 'text-8x-coral' : 'text-8x-muted hover:text-8x-ink'
                       }`}
                     >
@@ -452,15 +456,15 @@ const MeetingWorkspacePage = () => {
         </div>
 
         {/* Right Column: AI Summary */}
-        <div className="bg-white rounded-2xl shadow-sm border border-8x-border/60 p-8 flex flex-col sticky top-8">
-          <div className="flex items-center justify-between mb-8 pb-5 border-b border-8x-border/50">
+        <div className="flex flex-col lg:sticky lg:top-8 lg:border-l lg:border-8x-border/40 lg:pl-8">
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-8x-border/40">
             <h2 className="text-xl font-bold text-8x-ink">AI Summary</h2>
             <div className="flex flex-col items-end">
               <select
                 id="template-select"
                 value={selectedTemplate}
                 onChange={(e) => setSelectedTemplate(e.target.value)}
-                className="block w-44 rounded-lg border-8x-border bg-8x-surface text-8x-ink font-medium text-sm focus:border-8x-coral focus:ring-8x-coral py-2 pl-3 pr-8 shadow-sm cursor-pointer transition-colors hover:border-8x-border/80"
+                className="block w-44 bg-transparent border-0 text-8x-ink font-bold text-sm focus:ring-0 cursor-pointer text-right appearance-none"
               >
                 <option value="Standard">Standard</option>
                 <option value="Executive">Executive</option>
@@ -471,8 +475,8 @@ const MeetingWorkspacePage = () => {
           </div>
 
           {!meeting.summary ? (
-            <div className="py-16 flex items-center justify-center bg-8x-surface rounded-xl border border-dashed border-8x-border">
-              <p className="text-8x-muted text-sm font-medium">No summary available.</p>
+            <div className="py-16 flex items-center justify-center border-t border-8x-border/40">
+              <p className="text-8x-muted text-sm font-bold">No summary available.</p>
             </div>
           ) : (
             <div className="space-y-8 overflow-y-auto max-h-[calc(100vh-14rem)] pr-2">
@@ -537,9 +541,9 @@ const MeetingWorkspacePage = () => {
               <div>
                 <h3 className="text-[10px] font-bold text-8x-muted uppercase tracking-widest mb-4">Highlights</h3>
                 {meeting.highlights && meeting.highlights.length > 0 ? (
-                  <ul className="space-y-4">
+                  <ul className="space-y-6">
                     {meeting.highlights.map(highlight => (
-                      <li key={highlight._id} className="text-sm bg-8x-warm p-4 rounded-xl border-l-2 border-l-8x-coral border-y border-y-8x-border/40 border-r border-r-8x-border/40">
+                      <li key={highlight._id} className="text-sm pl-4 border-l-2 border-8x-coral">
                         <div className="flex items-center space-x-2 mb-2">
                           <button 
                             onClick={() => handleSeek(highlight.startTime)}
@@ -548,7 +552,7 @@ const MeetingWorkspacePage = () => {
                             {formatTime(highlight.startTime)}
                           </button>
                         </div>
-                        <p className="text-8x-ink italic leading-relaxed font-serif text-[15px]">"{highlight.text}"</p>
+                        <p className="text-8x-ink italic leading-relaxed font-serif text-lg">"{highlight.text}"</p>
                       </li>
                     ))}
                   </ul>

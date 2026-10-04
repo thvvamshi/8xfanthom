@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, Users, CheckSquare, Calendar, Video } from 'lucide-react';
+import { Clock, Users, CheckSquare } from 'lucide-react';
 import type { Meeting } from '../types/meeting';
 
 interface MeetingCardProps {
@@ -21,39 +21,36 @@ const MeetingCard: React.FC<MeetingCardProps> = ({ meeting }) => {
   return (
     <Link 
       to={`/meetings/${meeting._id}`}
-      className="block bg-white border border-8x-border/60 rounded-2xl p-6 hover:border-8x-border hover:shadow-sm transition-all duration-200 cursor-pointer group"
+      className="block py-6 border-b border-8x-border/40 hover:bg-white/50 transition-colors group px-4 -mx-4 rounded-xl"
     >
-      <div className="flex justify-between items-start mb-4">
-        <h3 className="text-xl font-bold text-8x-ink truncate pr-4 group-hover:text-8x-coral transition-colors" title={meeting.title}>
+      <div className="flex flex-col md:flex-row md:items-baseline md:justify-between mb-2">
+        <h3 className="text-2xl font-serif text-8x-ink truncate group-hover:text-8x-coral transition-colors">
           {meeting.title}
         </h3>
-        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-8x-surface text-8x-muted whitespace-nowrap border border-8x-border/50">
-          {meeting.meetingType}
+        <span className="text-sm font-bold text-8x-muted mt-1 md:mt-0">
+          {formatDate(meeting.date)}
         </span>
       </div>
       
-      <div className="grid grid-cols-2 gap-y-3 text-sm text-8x-muted mb-5">
-        <div className="flex items-center space-x-2">
-          <Calendar size={16} className="text-8x-muted/70" />
-          <span className="font-medium">{formatDate(meeting.date)}</span>
+      <div className="flex flex-wrap items-center text-sm text-8x-muted gap-x-6 gap-y-3 mt-3">
+        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border border-8x-border/60 text-8x-ink bg-white shadow-sm">
+          {meeting.meetingType}
+        </span>
+        <div className="flex items-center">
+          <Clock size={14} className="mr-2 opacity-70" />
+          {formatDuration(meeting.duration)}
         </div>
-        <div className="flex items-center space-x-2">
-          <Clock size={16} className="text-8x-muted/70" />
-          <span className="font-medium">{formatDuration(meeting.duration)}</span>
+        <div className="flex items-center">
+          <Users size={14} className="mr-2 opacity-70" />
+          {meeting.participants?.length || 0} participants
         </div>
-        <div className="flex items-center space-x-2">
-          <Users size={16} className="text-8x-muted/70" />
-          <span className="font-medium">{meeting.participants?.length || 0} participants</span>
+        <div className="flex items-center">
+          <CheckSquare size={14} className="mr-2 opacity-70" />
+          {meeting.actionItems?.length || 0} actions
         </div>
-        <div className="flex items-center space-x-2">
-          <CheckSquare size={16} className="text-8x-muted/70" />
-          <span className="font-medium">{meeting.actionItems?.length || 0} actions</span>
+        <div className="flex items-center text-xs ml-auto font-medium">
+          Template: {meeting.template}
         </div>
-      </div>
-      
-      <div className="flex items-center text-xs text-8x-muted font-medium border-t border-8x-surface pt-4">
-        <Video size={14} className="mr-2 text-8x-muted/70" />
-        <span>Template: {meeting.template}</span>
       </div>
     </Link>
   );

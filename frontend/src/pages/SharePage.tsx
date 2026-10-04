@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { Meeting } from '../types/meeting';
-import { Play, Pause, Loader2, VideoOff, Calendar, Clock, Users, ArrowRight } from 'lucide-react';
+import { Play, Pause, Loader2, VideoOff, ArrowRight } from 'lucide-react';
 
 const formatTime = (seconds: number) => {
   const m = Math.floor(seconds / 60);
@@ -155,24 +155,16 @@ const SharePage = () => {
       {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-8 py-10">
         {/* Meeting Header */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-serif text-8x-ink mb-4 tracking-tight">{meeting.title}</h1>
-          <div className="flex flex-wrap items-center gap-5 text-sm text-8x-muted font-medium">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white border border-8x-border shadow-sm text-8x-ink">
-              {meeting.meetingType}
-            </span>
-            <div className="flex items-center">
-              <Calendar size={16} className="mr-2 text-8x-muted/70" />
-              {formatDate(meeting.date)}
-            </div>
-            <div className="flex items-center">
-              <Clock size={16} className="mr-2 text-8x-muted/70" />
-              {Math.floor(meeting.duration / 60)} min
-            </div>
-            <div className="flex items-center">
-              <Users size={16} className="mr-2 text-8x-muted/70" />
-              {meeting.participants?.length || 0} participants
-            </div>
+        <div className="mb-10 pb-8 border-b border-8x-border/40">
+          <span className="text-[12px] font-bold text-8x-muted uppercase tracking-widest mb-4 block">Meeting</span>
+          <h1 className="text-4xl md:text-5xl font-serif text-8x-ink mb-6 tracking-tight leading-tight">{meeting.title}</h1>
+          
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-8x-muted font-medium">
+            <span>{formatDate(meeting.date)}</span>
+            <span className="text-8x-border/80">•</span>
+            <span>{meeting.participants?.length || 0} participants</span>
+            <span className="text-8x-border/80">•</span>
+            <span>{Math.floor(meeting.duration / 60)} min</span>
           </div>
         </div>
 
@@ -210,9 +202,11 @@ const SharePage = () => {
             </div>
 
             {/* Transcript Viewer */}
-            <div className="bg-white rounded-2xl shadow-sm border border-8x-border/60 p-8" ref={transcriptContainerRef}>
-              <h3 className="text-xl font-bold text-8x-ink mb-6 pb-4 border-b border-8x-border/50">Transcript</h3>
-              <div className="space-y-2">
+            <div className="pt-4" ref={transcriptContainerRef}>
+              <div className="flex items-center justify-between mb-8 pb-4 border-b border-8x-border/40">
+                <h2 className="text-xl font-bold text-8x-ink">Transcript</h2>
+              </div>
+              <div className="space-y-4 pr-4">
                 {meeting.transcript?.map((entry, index) => {
                   const isActive = index === activeIndex;
 
@@ -220,13 +214,13 @@ const SharePage = () => {
                     <div 
                       key={index} 
                       ref={isActive ? activeTranscriptRef : null}
-                      className={`flex space-x-4 p-4 rounded-xl transition-all ${
-                        isActive ? 'bg-8x-surface/50 border border-8x-border/50 shadow-sm' : 'hover:bg-8x-surface/30 border border-transparent'
+                      className={`flex space-x-6 p-4 -mx-4 rounded-xl transition-all ${
+                        isActive ? 'bg-white/50 border border-8x-border/40' : 'hover:bg-white/30 border border-transparent'
                       }`}
                     >
                       <button 
                         onClick={() => handleSeek(entry.startTime)}
-                        className={`text-sm font-medium min-w-[3.5rem] text-left hover:underline tabular-nums mt-0.5 ${
+                        className={`text-sm font-semibold min-w-[3.5rem] text-left tabular-nums mt-0.5 ${
                           isActive ? 'text-8x-coral' : 'text-8x-muted hover:text-8x-ink'
                         }`}
                       >
@@ -248,11 +242,15 @@ const SharePage = () => {
           </div>
 
           {/* Right Column: AI Summary */}
-          <div className="bg-white rounded-2xl shadow-sm border border-8x-border/60 p-8 flex flex-col lg:sticky lg:top-28 max-h-[calc(100vh-8rem)] overflow-y-auto">
-            <h2 className="text-xl font-bold text-8x-ink mb-8 pb-5 border-b border-8x-border/50">Meeting Summary</h2>
+          <div className="flex flex-col lg:sticky lg:top-28 lg:border-l lg:border-8x-border/40 lg:pl-8">
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-8x-border/40">
+              <h2 className="text-xl font-bold text-8x-ink">AI Summary</h2>
+            </div>
             
             {!meeting.summary ? (
-              <p className="text-8x-muted text-sm italic">No summary available.</p>
+              <div className="py-16 flex items-center justify-center border-t border-8x-border/40">
+                <p className="text-8x-muted text-sm font-bold">No summary available.</p>
+              </div>
             ) : (
               <div className="space-y-8 pr-2">
                 {/* Overview */}
@@ -402,16 +400,16 @@ const SharePage = () => {
                 {meeting.highlights && meeting.highlights.length > 0 && (
                   <div>
                     <h3 className="text-[10px] font-bold text-8x-muted uppercase tracking-widest mb-4">Highlights</h3>
-                    <ul className="space-y-4">
+                    <ul className="space-y-6">
                       {meeting.highlights.map(highlight => (
-                        <li key={highlight._id} className="text-sm bg-8x-warm p-4 rounded-xl border-l-2 border-l-8x-coral border-y border-y-8x-border/40 border-r border-r-8x-border/40">
+                        <li key={highlight._id} className="text-sm pl-4 border-l-2 border-8x-coral">
                           <button 
                             onClick={() => handleSeek(highlight.startTime)}
                             className="text-8x-coral hover:text-[#D94F32] font-bold font-mono text-xs hover:underline cursor-pointer mb-2 inline-block transition-colors"
                           >
                             {formatTime(highlight.startTime)}
                           </button>
-                          <p className="text-8x-ink italic leading-relaxed font-serif text-[15px]">"{highlight.text}"</p>
+                          <p className="text-8x-ink italic leading-relaxed font-serif text-lg">"{highlight.text}"</p>
                         </li>
                       ))}
                     </ul>
