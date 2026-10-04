@@ -299,8 +299,8 @@ const MeetingWorkspacePage = () => {
   if (isNotFound) {
     return (
       <div className="h-[70vh] flex flex-col items-center justify-center p-8">
-        <div className="bg-white rounded-2xl shadow-sm border border-8x-border/60 p-10 max-w-md w-full text-center">
-          <div className="w-14 h-14 bg-8x-surface border border-8x-border rounded-2xl flex items-center justify-center mx-auto mb-6 text-8x-muted shadow-sm">
+        <div className="bg-8x-surface rounded-2xl shadow-sm border border-8x-border/60 p-10 max-w-md w-full text-center">
+          <div className="w-14 h-14 bg-8x-warm border border-8x-border rounded-2xl flex items-center justify-center mx-auto mb-6 text-8x-muted shadow-sm">
             <VideoOff size={28} />
           </div>
           <h2 className="text-2xl font-bold text-8x-ink mb-3 font-serif">Meeting not found</h2>
@@ -348,15 +348,15 @@ const MeetingWorkspacePage = () => {
           <div className="flex items-center space-x-4">
             <Link 
               to={`/share/${meeting._id}`}
-              className="inline-flex items-center px-4 py-2 border border-8x-border text-sm font-semibold rounded-lg text-8x-ink hover:bg-white transition-colors"
+              className="inline-flex items-center px-4 py-2 border border-8x-border text-sm font-semibold rounded-lg text-8x-ink hover:bg-8x-surface transition-colors"
             >
               Share Meeting
             </Link>
           </div>
         </div>
         
-        <span className="text-[12px] font-bold text-8x-muted uppercase tracking-widest mb-4 block">Meeting</span>
-        <h1 className="text-4xl md:text-5xl font-serif text-8x-ink mb-6 tracking-tight leading-tight">{meeting.title}</h1>
+        <span className="text-xs font-bold text-8x-ink/60 uppercase tracking-[0.15em] mb-4 block">Meeting</span>
+        <h1 className="text-4xl md:text-5xl font-serif text-8x-ink mb-6 tracking-tight leading-[1.05]">{meeting.title}</h1>
         
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-8x-muted font-medium">
           <span>{formatDate(meeting.date)}</span>
@@ -416,7 +416,7 @@ const MeetingWorkspacePage = () => {
                     key={index} 
                     ref={isActive ? activeTranscriptRef : null}
                     className={`flex space-x-6 p-4 -mx-4 rounded-xl transition-all ${
-                      isActive ? 'bg-white/50 border border-8x-border/40' : 'hover:bg-white/30 border border-transparent'
+                      isActive ? 'bg-8x-surface/50 border border-8x-border/40' : 'hover:bg-8x-surface/30 border border-transparent'
                     }`}
                   >
                     <button 
@@ -512,7 +512,7 @@ const MeetingWorkspacePage = () => {
                       <li key={item._id} className="flex items-start text-sm group">
                         <button 
                           onClick={() => handleActionItemToggle(item._id, item.completed)}
-                          className={`h-4 w-4 rounded border mt-0.5 mr-3 flex-shrink-0 flex items-center justify-center cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-8x-coral ${item.completed ? 'bg-8x-coral border-8x-coral' : 'bg-white border-8x-border group-hover:border-8x-coral/50'}`}
+                          className={`h-4 w-4 rounded border mt-0.5 mr-3 flex-shrink-0 flex items-center justify-center cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-8x-coral ${item.completed ? 'bg-8x-coral border-8x-coral' : 'bg-8x-surface border-8x-border group-hover:border-8x-coral/50'}`}
                         >
                           {item.completed && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                         </button>

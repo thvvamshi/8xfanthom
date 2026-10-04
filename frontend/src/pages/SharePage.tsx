@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { Meeting } from '../types/meeting';
 import { Play, Pause, Loader2, VideoOff, ArrowRight } from 'lucide-react';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 const formatTime = (seconds: number) => {
   const m = Math.floor(seconds / 60);
@@ -133,31 +134,34 @@ const SharePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-8x-warm flex flex-col">
+    <div className="min-h-screen bg-8x-warm flex flex-col transition-colors">
       {/* Public Header */}
-      <header className="bg-white border-b border-8x-border/50 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
+      <div className="w-full px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 sticky top-0 z-50">
+        <header className="w-full max-w-[1200px] mx-auto bg-8x-navbar/95 backdrop-blur-md rounded-2xl border border-8x-border/50 px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between shadow-sm transition-all gap-4 sm:gap-0">
           <div className="flex items-center space-x-2">
-            <span className="font-serif font-bold text-3xl tracking-tight text-8x-ink">
-              8x<span className="font-sans font-medium tracking-tight ml-1.5 text-xl">Fathom</span>
+            <span className="font-serif font-bold text-2xl tracking-tight text-8x-ink">
+              8x<span className="font-sans font-medium tracking-tight ml-1 text-lg">Fathom</span>
             </span>
           </div>
-          <Link 
-            to={`/meetings/${meeting._id}`}
-            className="inline-flex items-center px-5 py-2.5 text-sm font-bold text-8x-ink bg-8x-surface hover:bg-8x-border/50 border border-8x-border/60 rounded-full transition-colors shadow-sm"
-          >
-            Open in 8xFathom
-            <ArrowRight size={16} className="ml-2" />
-          </Link>
-        </div>
-      </header>
+          <div className="flex items-center space-x-4 w-full sm:w-auto justify-center sm:justify-end">
+            <ThemeToggle />
+            <Link 
+              to={`/meetings/${meeting._id}`}
+              className="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-8x-btn-primary text-sm font-bold rounded-lg text-8x-btn-primary-fg bg-8x-btn-primary hover:bg-8x-btn-primary-hover transition-colors shadow-sm"
+            >
+              Open in 8xFathom
+              <ArrowRight size={16} className="ml-2" />
+            </Link>
+          </div>
+        </header>
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-8 py-10">
+      <main className="flex-1 max-w-[1200px] mx-auto w-full px-4 sm:px-6 md:px-8 py-10 md:py-16 animate-slide-up">
         {/* Meeting Header */}
         <div className="mb-10 pb-8 border-b border-8x-border/40">
-          <span className="text-[12px] font-bold text-8x-muted uppercase tracking-widest mb-4 block">Meeting</span>
-          <h1 className="text-4xl md:text-5xl font-serif text-8x-ink mb-6 tracking-tight leading-tight">{meeting.title}</h1>
+          <span className="text-xs font-bold text-8x-ink/60 uppercase tracking-[0.15em] mb-4 block">Meeting</span>
+          <h1 className="text-4xl md:text-5xl font-serif text-8x-ink mb-6 tracking-tight leading-[1.05]">{meeting.title}</h1>
           
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-8x-muted font-medium">
             <span>{formatDate(meeting.date)}</span>
@@ -380,7 +384,7 @@ const SharePage = () => {
                     <ul className="space-y-4">
                       {meeting.actionItems.map(item => (
                         <li key={item._id} className="flex items-start text-sm">
-                          <div className={`h-4 w-4 rounded border mt-0.5 mr-3 flex-shrink-0 flex items-center justify-center ${item.completed ? 'bg-8x-coral border-8x-coral' : 'bg-white border-8x-border'}`}>
+                          <div className={`h-4 w-4 rounded border mt-0.5 mr-3 flex-shrink-0 flex items-center justify-center ${item.completed ? 'bg-8x-coral border-8x-coral' : 'bg-8x-surface border-8x-border'}`}>
                             {item.completed && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                           </div>
                           <div className="flex-1">

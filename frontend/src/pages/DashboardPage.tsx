@@ -30,8 +30,8 @@ const DashboardPage = () => {
   return (
     <div className="w-full">
       <div className="mb-20">
-        <span className="text-[12px] font-bold text-8x-muted uppercase tracking-widest mb-6 block">Meeting Intelligence</span>
-        <h1 className="text-5xl md:text-7xl font-serif text-8x-ink mb-6 tracking-tight leading-none">Your meetings,<br/>understood.</h1>
+        <span className="text-xs font-bold text-8x-ink/60 uppercase tracking-[0.15em] mb-6 block">Meeting Intelligence</span>
+        <h1 className="text-5xl md:text-6xl font-serif text-8x-ink mb-6 tracking-tight leading-[1.05]">Your meetings,<br/>understood.</h1>
         <p className="text-lg text-8x-muted max-w-lg leading-relaxed">
           A clear view of every conversation,<br/>decision and follow-up.
         </p>

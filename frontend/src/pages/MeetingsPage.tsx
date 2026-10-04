@@ -30,7 +30,7 @@ const MeetingsPage = () => {
   return (
     <div className="w-full">
       <div className="mb-20">
-        <h1 className="text-5xl md:text-7xl font-serif text-8x-ink mb-6 tracking-tight leading-none">Meetings</h1>
+        <h1 className="text-5xl md:text-6xl font-serif text-8x-ink mb-6 tracking-tight leading-[1.05]">Meetings</h1>
         <p className="text-lg text-8x-muted max-w-lg leading-relaxed">
           Your conversation history, in one place.
         </p>
@@ -50,7 +50,7 @@ const MeetingsPage = () => {
             <p className="text-red-700 text-sm mt-1">{error}</p>
             <button 
               onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-white border border-red-200 text-red-700 hover:bg-red-50 rounded-lg text-sm font-bold transition-colors shadow-sm"
+              className="mt-4 px-4 py-2 bg-8x-surface border border-red-200 text-red-700 hover:bg-red-50 dark:border-red-900/30 dark:hover:bg-red-900/20 rounded-lg text-sm font-bold transition-colors shadow-sm"
             >
               Try Again
             </button>

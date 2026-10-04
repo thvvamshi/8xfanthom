@@ -1,40 +1,44 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play, Search, CheckSquare } from 'lucide-react';
+import { ArrowRight, Play } from 'lucide-react';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-8x-warm text-8x-ink font-sans flex flex-col animate-fade-in overflow-hidden">
+    <div className="min-h-screen bg-8x-warm text-8x-ink font-sans flex flex-col animate-fade-in overflow-hidden transition-colors">
       {/* Navbar (Standalone for Landing Page) */}
-      <header className="px-8 py-6 flex items-center border-b border-8x-border/40 bg-8x-warm/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-12">
-            <Link to="/" className="font-serif font-bold text-2xl tracking-tight text-8x-ink">
+      <div className="w-full px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 sticky top-0 z-50">
+        <header className="w-full max-w-[1200px] mx-auto bg-8x-navbar/95 backdrop-blur-md rounded-2xl border border-8x-border/50 px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between shadow-sm transition-all gap-4 sm:gap-0">
+          <div className="flex flex-col sm:flex-row items-center sm:space-x-12 gap-4 sm:gap-0 w-full sm:w-auto">
+            <Link to="/" className="font-serif font-bold text-2xl tracking-tight text-8x-ink transition-transform hover:scale-[1.02]">
               8x<span className="font-sans font-medium tracking-tight ml-1 text-lg">Fathom</span>
             </Link>
-            <nav className="hidden md:flex space-x-8">
+            <nav className="flex items-center justify-center space-x-6 sm:space-x-8 w-full sm:w-auto overflow-x-auto">
               <Link to="/dashboard" className="text-sm font-semibold text-8x-muted hover:text-8x-ink transition-colors">Dashboard</Link>
               <Link to="/meetings" className="text-sm font-semibold text-8x-muted hover:text-8x-ink transition-colors">Meetings</Link>
               <Link to="/search" className="text-sm font-semibold text-8x-muted hover:text-8x-ink transition-colors">Search</Link>
             </nav>
           </div>
-          <Link to="/dashboard" className="hidden md:inline-flex items-center px-4 py-2 border border-8x-ink text-sm font-bold rounded-lg text-white bg-8x-ink hover:bg-8x-navy transition-colors">
-            Sign In
-          </Link>
-        </div>
-      </header>
+          <div className="flex items-center space-x-4 w-full sm:w-auto justify-center sm:justify-end">
+            <ThemeToggle />
+            <Link to="/dashboard" className="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-8x-btn-primary text-sm font-bold rounded-lg text-8x-btn-primary-fg bg-8x-btn-primary hover:bg-8x-btn-primary-hover transition-colors">
+              Sign In
+            </Link>
+          </div>
+        </header>
+      </div>
 
-      <main className="flex-1 w-full max-w-[1440px] mx-auto">
+      <main className="flex-1 w-full max-w-[1200px] mx-auto">
         
         {/* SECTION 1 - HERO */}
-        <section className="px-8 py-24 md:py-32 flex flex-col items-center text-center max-w-5xl mx-auto animate-slide-up">
-          <span className="text-[12px] font-bold text-8x-muted uppercase tracking-widest mb-6 block">Meeting Intelligence</span>
-          <h1 className="text-6xl md:text-8xl font-serif text-8x-ink mb-8 tracking-tight leading-none">
+        <section className="px-4 sm:px-6 md:px-8 pt-20 pb-32 flex flex-col items-center text-center max-w-4xl mx-auto animate-slide-up">
+          <span className="text-xs font-bold text-8x-ink/60 uppercase tracking-[0.15em] mb-8 block">Meeting Intelligence</span>
+          <h1 className="text-[56px] md:text-[80px] font-serif text-8x-ink mb-10 tracking-tight leading-[1.05] max-w-3xl mx-auto">
             Every meeting.<br/>Understood.
           </h1>
-          <p className="text-xl md:text-2xl text-8x-muted max-w-2xl leading-relaxed mb-12">
+          <p className="text-[19px] md:text-[21px] text-8x-muted max-w-2xl mx-auto leading-relaxed mb-14">
             Record, search and understand every conversation — without digging through an hour of video.
           </p>
-          <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 w-full">
             <Link 
               to="/meetings"
               className="inline-flex items-center px-8 py-4 border border-transparent text-base font-bold rounded-xl text-white bg-8x-coral hover:bg-[#D94F32] transition-colors shadow-sm"
@@ -51,42 +55,36 @@ const LandingPage = () => {
         </section>
 
         {/* SECTION 2 - PRODUCT VALUE */}
-        <section className="px-8 py-24 border-t border-8x-border/40">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto">
-            <div className="flex flex-col group">
-              <div className="w-12 h-12 rounded-xl bg-white border border-8x-border/60 flex items-center justify-center mb-6 group-hover:border-8x-coral transition-colors">
-                <Search className="w-5 h-5 text-8x-ink" />
-              </div>
-              <h3 className="text-2xl font-serif text-8x-ink mb-4">Understand every conversation</h3>
-              <p className="text-8x-muted leading-relaxed">Instantly read the AI summary and key points of what was actually discussed.</p>
+        <section className="px-4 sm:px-6 md:px-8 py-32">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 max-w-full">
+            <div className="flex flex-col group border-t border-8x-border/60 pt-6 transition-colors hover:border-8x-coral">
+              <span className="text-sm font-bold text-8x-muted font-mono mb-4">01</span>
+              <h3 className="text-2xl font-serif text-8x-ink mb-4 leading-snug">Understand every conversation</h3>
+              <p className="text-lg text-8x-muted leading-relaxed">Instantly read the AI summary and key points of what was actually discussed.</p>
             </div>
-            <div className="flex flex-col group">
-              <div className="w-12 h-12 rounded-xl bg-white border border-8x-border/60 flex items-center justify-center mb-6 group-hover:border-8x-coral transition-colors">
-                <Play className="w-5 h-5 text-8x-ink ml-1" />
-              </div>
-              <h3 className="text-2xl font-serif text-8x-ink mb-4">Find the exact moment</h3>
-              <p className="text-8x-muted leading-relaxed">Search across all meetings and jump directly to the timestamp in the recording.</p>
+            <div className="flex flex-col group border-t border-8x-border/60 pt-6 transition-colors hover:border-8x-coral">
+              <span className="text-sm font-bold text-8x-muted font-mono mb-4">02</span>
+              <h3 className="text-2xl font-serif text-8x-ink mb-4 leading-snug">Find the exact moment</h3>
+              <p className="text-lg text-8x-muted leading-relaxed">Search across all meetings and jump directly to the timestamp in the recording.</p>
             </div>
-            <div className="flex flex-col group">
-              <div className="w-12 h-12 rounded-xl bg-white border border-8x-border/60 flex items-center justify-center mb-6 group-hover:border-8x-coral transition-colors">
-                <CheckSquare className="w-5 h-5 text-8x-ink" />
-              </div>
-              <h3 className="text-2xl font-serif text-8x-ink mb-4">Turn conversations into action</h3>
-              <p className="text-8x-muted leading-relaxed">Automatically extract action items and highlights so your team always knows what's next.</p>
+            <div className="flex flex-col group border-t border-8x-border/60 pt-6 transition-colors hover:border-8x-coral">
+              <span className="text-sm font-bold text-8x-muted font-mono mb-4">03</span>
+              <h3 className="text-2xl font-serif text-8x-ink mb-4 leading-snug">Turn conversations into action</h3>
+              <p className="text-lg text-8x-muted leading-relaxed">Automatically extract action items and highlights so your team always knows what's next.</p>
             </div>
           </div>
         </section>
 
         {/* SECTION 3 - PRODUCT PREVIEW */}
-        <section className="px-8 py-32 border-t border-8x-border/40 bg-8x-surface/30">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-serif text-8x-ink tracking-tight mb-4">Built for clarity</h2>
-              <p className="text-lg text-8x-muted">A product workspace that gets out of your way.</p>
+        <section className="px-4 sm:px-6 md:px-8 pb-32">
+          <div className="max-w-full mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-5xl font-serif text-8x-ink tracking-tight mb-5">Built for clarity</h2>
+              <p className="text-xl text-8x-muted max-w-2xl mx-auto">A product workspace that gets out of your way.</p>
             </div>
             
             {/* Mock Workspace UI */}
-            <div className="bg-white rounded-2xl border border-8x-border/60 shadow-xl overflow-hidden group hover:border-8x-border transition-colors">
+            <div className="bg-8x-surface rounded-2xl border border-8x-border/60 shadow-xl overflow-hidden group hover:border-8x-border transition-colors">
               <div className="p-8 md:p-12">
                 <div className="mb-10 pb-8 border-b border-8x-border/40">
                   <span className="text-[12px] font-bold text-8x-muted uppercase tracking-widest mb-4 block">Meeting</span>
@@ -158,11 +156,11 @@ const LandingPage = () => {
         </section>
 
         {/* SECTION 4 - FINAL CTA */}
-        <section className="px-8 py-32 text-center border-t border-8x-border/40">
-          <h2 className="text-5xl font-serif text-8x-ink mb-10 tracking-tight">Make every conversation useful.</h2>
+        <section className="px-4 sm:px-6 md:px-8 py-32 text-center">
+          <h2 className="text-5xl md:text-6xl font-serif text-8x-ink mb-10 tracking-tight leading-tight">Make every conversation<br/>useful.</h2>
           <Link 
             to="/meetings"
-            className="inline-flex items-center px-8 py-4 border border-transparent text-base font-bold rounded-xl text-white bg-8x-ink hover:bg-8x-navy transition-colors shadow-sm"
+            className="inline-flex items-center px-8 py-4 border border-8x-btn-primary text-base font-bold rounded-xl text-8x-btn-primary-fg bg-8x-btn-primary hover:bg-8x-btn-primary-hover transition-colors shadow-sm"
           >
             Open your meetings <ArrowRight className="ml-2 w-5 h-5" />
           </Link>

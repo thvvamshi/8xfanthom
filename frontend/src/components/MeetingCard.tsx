@@ -21,7 +21,7 @@ const MeetingCard: React.FC<MeetingCardProps> = ({ meeting }) => {
   return (
     <Link 
       to={`/meetings/${meeting._id}`}
-      className="block py-6 border-b border-8x-border/40 hover:bg-white/50 transition-colors group px-4 -mx-4 rounded-xl"
+      className="block py-6 border-b border-8x-border/40 hover:bg-8x-surface/50 transition-colors group px-4 -mx-4 rounded-xl"
     >
       <div className="flex flex-col md:flex-row md:items-baseline md:justify-between mb-2">
         <h3 className="text-2xl font-serif text-8x-ink truncate group-hover:text-8x-coral transition-colors">
@@ -33,7 +33,7 @@ const MeetingCard: React.FC<MeetingCardProps> = ({ meeting }) => {
       </div>
       
       <div className="flex flex-wrap items-center text-sm text-8x-muted gap-x-6 gap-y-3 mt-3">
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border border-8x-border/60 text-8x-ink bg-white shadow-sm">
+        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border border-8x-border/60 text-8x-ink bg-8x-surface shadow-sm">
           {meeting.meetingType}
         </span>
         <div className="flex items-center">
