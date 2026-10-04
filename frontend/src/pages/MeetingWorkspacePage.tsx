@@ -102,7 +102,10 @@ const MeetingWorkspacePage = () => {
   useEffect(() => {
     if (!meeting || meeting.completed) return;
     
-    if (currentTime >= meeting.duration - 5) {
+    // For a 60m meeting, duration - 300 is 55:00. For shorter meetings, fallback to 90%
+    const completionThreshold = Math.max(meeting.duration * 0.9, meeting.duration - 300);
+    
+    if (currentTime >= completionThreshold) {
       // Optimistically update local state so UI locks in completion instantly
       setMeeting(prev => prev ? { ...prev, completed: true } : null);
 
