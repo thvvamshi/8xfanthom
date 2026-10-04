@@ -65,24 +65,27 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4 h-full flex flex-col">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Search</h1>
+    <div className="max-w-4xl mx-auto py-10 px-4 h-full flex flex-col">
+      <div className="mb-10 text-center">
+        <h1 className="text-5xl font-serif text-8x-ink mb-4 tracking-tight leading-tight">Search your meetings</h1>
+        <p className="text-8x-muted text-lg">Find meetings, transcript moments, and people.</p>
+      </div>
       
-      <form onSubmit={handleSearch} className="relative mb-8">
-        <div className="relative flex items-center w-full">
-          <Search className="absolute left-4 w-5 h-5 text-gray-400" />
+      <form onSubmit={handleSearch} className="relative mb-10 max-w-3xl mx-auto w-full">
+        <div className="relative flex items-center w-full shadow-sm rounded-2xl group">
+          <Search className="absolute left-5 w-6 h-6 text-8x-muted group-focus-within:text-8x-ink transition-colors" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search meetings, transcripts, and people..."
-            className="w-full pl-12 pr-12 py-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm text-lg transition-all"
+            placeholder="Search keywords..."
+            className="w-full pl-14 pr-14 py-5 rounded-2xl border border-8x-border/80 focus:outline-none focus:ring-4 focus:ring-8x-ink/10 focus:border-8x-ink text-xl transition-all text-8x-ink placeholder-8x-muted/70 bg-white"
           />
           {query && (
             <button
               type="button"
               onClick={handleClear}
-              className="absolute right-4 p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute right-4 p-2 rounded-full hover:bg-8x-surface text-8x-muted hover:text-8x-ink transition-colors focus:outline-none"
             >
               <X className="w-5 h-5" />
             </button>
@@ -90,44 +93,45 @@ const SearchPage = () => {
         </div>
       </form>
 
-      <div className="flex-1 overflow-y-auto pb-12">
+      <div className="flex-1 overflow-y-auto pb-12 max-w-3xl mx-auto w-full">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-            <Loader2 className="w-8 h-8 animate-spin mb-4" />
-            <p>Searching your meetings...</p>
+          <div className="flex flex-col items-center justify-center py-20 bg-8x-surface rounded-2xl border border-8x-border/50">
+            <Loader2 className="w-10 h-10 animate-spin mb-4 text-8x-coral" />
+            <p className="text-8x-muted font-medium">Searching your meetings...</p>
           </div>
         ) : error ? (
-          <div className="bg-red-50 text-red-600 p-4 rounded-lg border border-red-100">
-            {error}
+          <div className="bg-red-50 text-red-600 p-6 rounded-2xl border border-red-100">
+            <h3 className="font-bold text-lg mb-1">Search Error</h3>
+            <p>{error}</p>
           </div>
         ) : results ? (
           results.length > 0 ? (
-            <div className="space-y-4">
-              <p className="text-sm font-medium text-gray-500 mb-4 px-1">
+            <div className="space-y-5">
+              <p className="text-xs font-bold text-8x-muted/70 tracking-widest uppercase mb-4 px-1">
                 {results.length} {results.length === 1 ? 'result' : 'results'}
               </p>
               {results.map((result, idx) => (
                 <button
                   key={`${result.meetingId}-${idx}`}
                   onClick={() => handleResultClick(result)}
-                  className="w-full text-left bg-white p-5 rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all group"
+                  className="w-full text-left bg-white p-6 rounded-2xl border border-8x-border/60 hover:border-8x-border hover:shadow-sm transition-all group"
                 >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
+                  <h3 className="text-xl font-bold text-8x-ink mb-3 group-hover:text-8x-coral transition-colors">
                     {result.title}
                   </h3>
                   {result.matchType === 'transcript' ? (
-                    <div className="space-y-1">
-                      <div className="flex items-center text-sm text-gray-500 font-medium">
+                    <div className="space-y-2">
+                      <div className="flex items-center text-sm text-8x-muted font-bold tracking-wide">
                         {result.speaker && <span>{result.speaker}</span>}
-                        {result.speaker && result.timestamp !== null && <span className="mx-2">·</span>}
+                        {result.speaker && result.timestamp !== null && <span className="mx-2 text-8x-border font-normal">|</span>}
                         {result.timestamp !== null && <span>{formatTimestamp(result.timestamp)}</span>}
                       </div>
-                      <p className="text-gray-700 italic border-l-4 border-indigo-200 pl-3 py-1">
+                      <p className="text-8x-ink italic border-l-2 border-8x-coral pl-4 py-1 font-serif text-[15px] leading-relaxed">
                         "{result.snippet}"
                       </p>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 font-medium">
+                    <p className="text-sm text-8x-muted font-medium">
                       {result.snippet}
                     </p>
                   )}
@@ -135,19 +139,13 @@ const SearchPage = () => {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-              <Search className="w-12 h-12 text-gray-300 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No meetings found</h3>
-              <p>Try adjusting your search term.</p>
+            <div className="flex flex-col items-center justify-center py-24 bg-8x-surface rounded-2xl border border-8x-border/50 border-dashed">
+              <Search className="w-12 h-12 text-8x-muted/50 mb-4" />
+              <h3 className="text-xl font-bold text-8x-ink mb-2 font-serif">No meetings found</h3>
+              <p className="text-8x-muted">Try adjusting your search term.</p>
             </div>
           )
-        ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-            <Search className="w-12 h-12 text-gray-300 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Search your meetings</h3>
-            <p>Find meetings, transcript moments, and people.</p>
-          </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

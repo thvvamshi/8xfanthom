@@ -1,7 +1,17 @@
 @import "tailwindcss";
 
+@theme {
+  --color-8x-coral: #F15A3A;
+  --color-8x-ink: #171915;
+  --color-8x-navy: #182B67;
+  --color-8x-warm: #F7F3EC;
+  --color-8x-surface: #F1EEE7;
+  --color-8x-muted: #6B6B67;
+  --color-8x-border: #DDD9D1;
+}
+
 @layer base {
   body {
-    @apply antialiased text-gray-900 bg-gray-50;
+    @apply antialiased text-8x-ink bg-8x-warm;
   }
 }
