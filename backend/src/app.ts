@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import cors from 'cors';
 import healthRoutes from './routes/health.routes';
 import meetingRoutes from './routes/meeting.routes';
@@ -70,7 +71,19 @@ app.use(
   }
 );
 
-// Unknown route handler
+// Serve frontend in production
+const frontendPath = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendPath));
+
+// SPA Fallback for all non-API routes
+app.use((req, res, next) => {
+  if (req.method !== 'GET' || req.path.startsWith('/api/')) {
+    return next();
+  }
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// Unknown route handler for API requests
 app.use((req, res) => {
   res.status(404).json({
     error: 'Not Found',
