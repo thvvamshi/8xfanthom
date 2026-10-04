@@ -2,7 +2,10 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import type { Meeting } from '../types/meeting';
 import { ArrowLeft, Play, Pause, Loader2, AlertCircle, VideoOff, Highlighter } from 'lucide-react';
-import { updateActionItem, createHighlight } from '../lib/api';
+import { updateActionItem, createHighlight, updateIntents, updateMeetingCompletion } from '../lib/api';
+import MeetingIntentSetup from '../components/MeetingIntentSetup';
+import MeetingIntentPanel from '../components/MeetingIntentPanel';
+import TemplateSelector from '../components/TemplateSelector';
 
 const formatTime = (seconds: number) => {
   const m = Math.floor(seconds / 60);
@@ -26,6 +29,8 @@ const MeetingWorkspacePage = () => {
   // Player state
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [scrollTrigger, setScrollTrigger] = useState(0);
+  const [isEditingIntents, setIsEditingIntents] = useState(false);
   
   // Refs for scrolling
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
@@ -93,6 +98,25 @@ const MeetingWorkspacePage = () => {
     return () => clearInterval(interval);
   }, [isPlaying, meeting]);
 
+  // Persist meeting completion state
+  useEffect(() => {
+    if (!meeting || meeting.completed) return;
+    
+    if (currentTime >= meeting.duration - 5) {
+      // Optimistically update local state so UI locks in completion instantly
+      setMeeting(prev => prev ? { ...prev, completed: true } : null);
+
+      // Persist to backend
+      updateMeetingCompletion(meeting._id, true)
+        .catch(err => {
+          console.error('Failed to persist meeting completion', err);
+          // Revert on failure
+          setMeeting(prev => prev ? { ...prev, completed: false } : null);
+        });
+    }
+  }, [currentTime, meeting]);
+
+
   // Determine active index
   const activeIndex = meeting ? meeting.transcript.findIndex((entry, index) => {
     const isLast = index === meeting.transcript.length - 1;
@@ -100,7 +124,7 @@ const MeetingWorkspacePage = () => {
     return currentTime >= entry.startTime && currentTime < nextTime;
   }) : -1;
 
-  // Scroll active transcript into view ONLY when activeIndex changes
+  // Scroll active transcript into view when activeIndex changes or when explicitly triggered
   useEffect(() => {
     if (activeTranscriptRef.current && transcriptContainerRef.current) {
       activeTranscriptRef.current.scrollIntoView({
@@ -108,10 +132,23 @@ const MeetingWorkspacePage = () => {
         block: 'center'
       });
     }
-  }, [activeIndex]);
+  }, [activeIndex, scrollTrigger]);
+
+  const handleSaveIntents = async (newIntents: any[]) => {
+    if (!meeting) return;
+    try {
+      const savedIntents = await updateIntents(meeting._id, newIntents);
+      setMeeting({ ...meeting, intents: savedIntents });
+      setIsEditingIntents(false);
+    } catch (err) {
+      console.error('Failed to save intents', err);
+      throw err;
+    }
+  };
 
   const handleSeek = (time: number) => {
     setCurrentTime(time);
+    setScrollTrigger(prev => prev + 1);
   };
 
   const handleSeekbarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -407,7 +444,7 @@ const MeetingWorkspacePage = () => {
             <div className="flex items-center justify-between mb-8 pb-4 border-b border-8x-border/40">
               <h2 className="text-xl font-bold text-8x-ink">Transcript</h2>
             </div>
-            <div className="space-y-4 pr-4">
+            <div className="space-y-4">
               {meeting.transcript?.map((entry, index) => {
                 const isActive = index === activeIndex;
 
@@ -415,7 +452,7 @@ const MeetingWorkspacePage = () => {
                   <div 
                     key={index} 
                     ref={isActive ? activeTranscriptRef : null}
-                    className={`flex space-x-6 p-4 -mx-4 rounded-xl transition-all ${
+                    className={`flex space-x-6 p-4 rounded-xl transition-all ${
                       isActive ? 'bg-8x-surface/50 border border-8x-border/40' : 'hover:bg-8x-surface/30 border border-transparent'
                     }`}
                   >
@@ -432,7 +469,7 @@ const MeetingWorkspacePage = () => {
                         <span>{entry.speaker}</span>
                         <button 
                           onClick={() => handleHighlight(entry)}
-                          className={`text-8x-muted opacity-0 group-hover:opacity-100 hover:text-8x-coral transition-all ${meeting.highlights?.some(h => h.startTime === entry.startTime && h.text === entry.text) ? 'opacity-100 text-8x-coral' : ''}`}
+                          className={`text-8x-muted opacity-0 group-hover:opacity-100 p-2 -mr-2 rounded-lg hover:bg-8x-surface hover:text-8x-coral transition-all ${meeting.highlights?.some(h => h.startTime === entry.startTime && h.text === entry.text) ? 'opacity-100 text-8x-coral' : ''}`}
                           title="Highlight this moment"
                         >
                           <Highlighter size={16} />
@@ -455,22 +492,51 @@ const MeetingWorkspacePage = () => {
           </div>
         </div>
 
-        {/* Right Column: AI Summary */}
-        <div className="flex flex-col lg:sticky lg:top-8 lg:border-l lg:border-8x-border/40 lg:pl-8">
+        {/* Right Column */}
+        <div className="flex flex-col lg:border-l lg:border-8x-border/40 lg:pl-8">
+          
+          {isEditingIntents ? (
+            <MeetingIntentSetup
+              meetingId={meeting._id}
+              initialIntents={meeting.intents || []}
+              onSave={handleSaveIntents}
+              onCancel={() => setIsEditingIntents(false)}
+            />
+          ) : meeting.intents && meeting.intents.length > 0 ? (
+            <div className="relative">
+              <button 
+                onClick={() => setIsEditingIntents(true)}
+                className="absolute top-1 right-0 text-xs font-bold text-8x-muted hover:text-8x-ink transition-colors z-10"
+              >
+                Edit
+              </button>
+              <MeetingIntentPanel
+                intents={meeting.intents}
+                currentTime={currentTime}
+                duration={meeting.duration}
+                isCompleted={meeting.completed}
+                onSeek={handleSeek}
+              />
+            </div>
+          ) : (
+            <div className="mb-8 pb-4 border-b border-8x-border/40 flex justify-end">
+              <button 
+                onClick={() => setIsEditingIntents(true)}
+                className="text-xs font-bold text-8x-muted hover:text-8x-ink transition-colors"
+              >
+                + Add meeting priorities
+              </button>
+            </div>
+          )}
+
           <div className="flex items-center justify-between mb-8 pb-4 border-b border-8x-border/40">
             <h2 className="text-xl font-bold text-8x-ink">AI Summary</h2>
             <div className="flex flex-col items-end">
-              <select
-                id="template-select"
+              <TemplateSelector
                 value={selectedTemplate}
-                onChange={(e) => setSelectedTemplate(e.target.value)}
-                className="block w-44 bg-transparent border-0 text-8x-ink font-bold text-sm focus:ring-0 cursor-pointer text-right appearance-none"
-              >
-                <option value="Standard">Standard</option>
-                <option value="Executive">Executive</option>
-                <option value="Sales Discovery">Sales Discovery</option>
-                <option value="Candidate Interview">Candidate Interview</option>
-              </select>
+                onChange={setSelectedTemplate}
+                options={['Standard', 'Executive', 'Sales Discovery', 'Candidate Interview']}
+              />
             </div>
           </div>
 
@@ -479,7 +545,7 @@ const MeetingWorkspacePage = () => {
               <p className="text-8x-muted text-sm font-bold">No summary available.</p>
             </div>
           ) : (
-            <div className="space-y-8 overflow-y-auto max-h-[calc(100vh-14rem)] pr-2">
+            <div className="space-y-8 pr-2">
               {/* Overview */}
               <div>
                 <h3 className="text-[10px] font-bold text-8x-muted uppercase tracking-widest mb-3">Overview</h3>
@@ -512,9 +578,9 @@ const MeetingWorkspacePage = () => {
                       <li key={item._id} className="flex items-start text-sm group">
                         <button 
                           onClick={() => handleActionItemToggle(item._id, item.completed)}
-                          className={`h-4 w-4 rounded border mt-0.5 mr-3 flex-shrink-0 flex items-center justify-center cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-8x-coral ${item.completed ? 'bg-8x-coral border-8x-coral' : 'bg-8x-surface border-8x-border group-hover:border-8x-coral/50'}`}
+                          className={`h-5 w-5 rounded-md border mt-0.5 mr-4 flex-shrink-0 flex items-center justify-center cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-8x-coral ${item.completed ? 'bg-8x-coral border-8x-coral' : 'bg-8x-surface border-8x-border group-hover:border-8x-coral/50'}`}
                         >
-                          {item.completed && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                          {item.completed && <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                         </button>
                         <div className="flex-1">
                           <span className={`font-medium ${item.completed ? 'text-8x-muted line-through' : 'text-8x-ink'}`}>{item.text}</span>
