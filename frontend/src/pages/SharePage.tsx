@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import type { Meeting } from '../types/meeting';
 import { Play, Pause, Loader2, VideoOff, ArrowRight } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { API_URL } from '../lib/api';
 
 const formatTime = (seconds: number) => {
   const m = Math.floor(seconds / 60);
@@ -39,7 +40,7 @@ const SharePage = () => {
           return;
         }
 
-        const res = await fetch(`http://localhost:5000/api/meetings/${id}`);
+        const res = await fetch(`${API_URL}/meetings/${id}`);
         if (res.status === 404) {
           setIsNotFound(true);
           return;

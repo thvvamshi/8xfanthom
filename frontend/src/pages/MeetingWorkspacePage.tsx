@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import type { Meeting } from '../types/meeting';
 import { ArrowLeft, Play, Pause, Loader2, AlertCircle, VideoOff, Highlighter } from 'lucide-react';
-import { updateActionItem, createHighlight, updateIntents, updateMeetingCompletion } from '../lib/api';
+import { API_URL, updateActionItem, createHighlight, updateIntents, updateMeetingCompletion } from '../lib/api';
 import MeetingIntentSetup from '../components/MeetingIntentSetup';
 import MeetingIntentPanel from '../components/MeetingIntentPanel';
 import TemplateSelector from '../components/TemplateSelector';
@@ -50,7 +50,7 @@ const MeetingWorkspacePage = () => {
           return;
         }
         
-        const res = await fetch(`http://localhost:5000/api/meetings/${id}`);
+        const res = await fetch(`${API_URL}/meetings/${id}`);
         if (res.status === 404) {
           setIsNotFound(true);
           return;
